@@ -1,26 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FotoServicioService } from '../../Servicios/foto-servicio.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Foto } from '../../Interfaces/foto';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-album-view',
-  imports: [HttpClientModule],
-  providers: [FotoServicioService],
   templateUrl: './album-view.component.html',
-  styleUrl: './album-view.component.css'
+  styleUrls: ['./album-view.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
+export class AlbumViewComponent implements OnInit {
+  fotos: any;
 
-export class AlbumViewComponent {
-  fotos: Foto[] = []
-  listOfthumbnails =[0,1,2,3,4,5,6,7,8]
-  
-  constructor(private fotoServicio:FotoServicioService){
-
-  }
+  constructor(private fotoServicio: FotoServicioService) {}
 
   ngOnInit(): void {
-    this.fotoServicio.obtenerdatos().subscribe(fotos => {
-      this.fotos = fotos;
-  })
+    this.fotoServicio.obtenerFotos().subscribe((data: any) => {
+      this.fotos = data.map((imagen: { id: any; download_url: any; author?: string }) => ({
+        id: imagen.id,
+        description: imagen.author || "No description available",
+        download_url: imagen.download_url
+      }));
+    });
   }
 }
